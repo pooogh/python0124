@@ -113,16 +113,23 @@ sitenames.get(url) as response - возвращает объект со свой
 import aiohttp
 # проверяем конкретную ссылку
 async def check_status(session, url):
-    async with session.get(url) as response:
-        print(response)
-        return f"{url} OK" if response.status < 400 else f"{url} Not allowed"
+    try:
+        async with session.get(url) as response:
+            # print(response)
+            # /cite -> /site code 300
+            return f"{url} OK" if response.status < 400 else f"{url} Not allowed"
+    except:
+        return f"Connection witn error to {url}"
     
 async def main(urls):
     async with aiohttp.ClientSession() as session:
         tasks = [check_status(session, url) for url in urls]
         result = await asyncio.gather(*tasks)
-        print(result)
+        # print('\n'.join(result))
+        print(*result, sep='\n')
 
-asyncio.run(main(['https://www.google.com', 'https://www.python.org']))
+asyncio.run(main(['https://www.google.com', 
+                  'https://www.python.org',
+                  'https://dfkdjfjs.org']))
 
 # обработать ошибки и сделать вывод красивым
