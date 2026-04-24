@@ -49,3 +49,26 @@ async def send_cookies(url, **cookie):
 
 asyncio.run(send_cookies("https://httpbin.org/cookies", name="user", secret="secret_hash"))
 
+# task 5
+async def read_stream(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status < 400:
+                async for line in response.content:
+                    print("Get chunk:", line.decode('utf-8'))
+                print("Stream is over")
+            else:
+                print(response.status)
+
+asyncio.run(read_stream("https://httpbin.org/stram/3"))
+
+# task 6
+async def bypass_ssl(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, ssl=False) as response:
+            try:
+                print(response.status)
+            except asyncio.TimeoutError:
+                print("Timeout error")
+
+asyncio.run(bypass_ssl("https://self-signed.badssl.com/"))
